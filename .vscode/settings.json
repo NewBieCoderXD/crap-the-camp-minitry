@@ -1,5 +1,6 @@
 {
     "code-runner.executorMap": {
-        "sql": "psql -d crap-the-camp-minitry < commands.sql #"
+        // "sql": "echo $fileBaseName"
+        "sql": "psql -d crap-the-camp-minitry -U postgres -f $fileBaseName"
     }
 }
