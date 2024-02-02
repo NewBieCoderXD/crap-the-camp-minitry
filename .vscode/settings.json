@@ -1,0 +1,5 @@
+{
+    "code-runner.executorMap": {
+        "sql": "psql -d crap-the-camp-minitry < commands.sql #"
+    }
+}
