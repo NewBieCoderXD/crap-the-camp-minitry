@@ -51,7 +51,7 @@ CREATE TABLE "Transaction"(
    in_date DATE NOT NULL,                                                                                              
    customer_id INTEGER NOT NULL REFERENCES "Customer" (customer_id),                                                     
    address VARCHAR NOT NULL REFERENCES "Place" (address),                                                              
-   pay_date DATE NOT NULL,                                                                                             
+   pay_timestamp TIMESTAMP NOT NULL,                                                                                             
    PRIMARY KEY (in_date, customer_id, address)                                                                          
 );    
 
@@ -83,6 +83,18 @@ CREATE TABLE "edit"(
    PRIMARY KEY (address,editor_email,booking_owner_id,edit_timestamp)
 );
 
+CREATE OR REPLACE PROCEDURE pay(
+   in_date DATE,
+   customer_id INT,
+   address VARCHAR
+) LANGUAGE plpgsql
+AS
+$$
+BEGIN
+   INSERT INTO "Transaction" VALUES (in_date,customer_id,address,NOW());
+END
+$$;
+
 CREATE OR REPLACE PROCEDURE edit_booking(
    editor_email VARCHAR,
    booking_owner_id INTEGER,
@@ -101,8 +113,9 @@ DECLARE
    old_price DECIMAL;
    old_out_date DATE;
 BEGIN
+   -- don't forget to check if transaction made
    IF NOT EXISTS (
-      SELECT 1 FROM "Booking"
+      SELECT 1 FROM "Booking" NATURAL JOIN "Transaction"
       WHERE old_in_date="Booking".in_date
       AND booking_owner_id="Booking".customer_id
       AND old_address="Booking".address

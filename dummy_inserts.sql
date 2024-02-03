@@ -20,12 +20,15 @@ INSERT INTO "Place" VALUES
 INSERT INTO "Booking" VALUES 
 ('2023-05-11','1','บางหว้า',50,'2023-05-13');
 
-CALL edit_booking('456@gmail.com',1,'2023-05-11','บางหว้า', '2023-05-12','2023-05-13','บางหว้า',50);
--- CALL delete_booking('123@gmail.com','2023-05-11','1','บางหว้า');
+CALL pay('2023-05-11',1,'บางหว้า');
+SELECT * FROM "Booking" NATURAL JOIN "Transaction";
 
-SELECT * FROM "Booking";
+-- CALL edit_booking('456@gmail.com',1,'2023-05-11','บางหว้า', '2023-05-12','2023-05-13','บางหว้า',50);
+-- -- CALL delete_booking('123@gmail.com','2023-05-11','1','บางหว้า');
 
-SELECT * FROM "edit";
+-- SELECT * FROM "Booking";
+
+-- SELECT * FROM "edit";
 -- SELECT * FROM "delete";
 
 COMMIT;
