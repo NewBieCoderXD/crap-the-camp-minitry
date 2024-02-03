@@ -50,14 +50,14 @@ CREATE TABLE "Booking"(
    address VARCHAR NOT NULL REFERENCES "Place" (address),
    out_date DATE NOT NULL,
    PRIMARY KEY (in_date, customer_id, address),
-   CONSTRAINT time_travel CHECK (out_date>=in_date)
+   CONSTRAINT time_travel CHECK (out_date>=in_date AND EXTRACT(day FROM AGE(out_date,in_date)) <= 3)
 );
 
 CREATE TABLE "Transaction"(                                                                    
    in_date DATE NOT NULL,                                                                                              
    customer_id INTEGER NOT NULL REFERENCES "Customer" (customer_id),                                                     
    address VARCHAR NOT NULL REFERENCES "Place" (address),
-   price DECIMAL NOT NULL,                                                            
+   price DECIMAL NOT NULL,
    pay_timestamp TIMESTAMP NOT NULL,                                                                                             
    PRIMARY KEY (in_date, customer_id, address)                                                                          
 );    
@@ -99,6 +99,39 @@ CREATE TABLE "log"(
    email VARCHAR,
    log_time TIMESTAMP
 );
+
+CREATE OR REPLACE FUNCTION login(
+   user_email VARCHAR,
+   password VARCHAR(40)
+)
+RETURNS boolean
+LANGUAGE plpgsql
+AS
+$$
+BEGIN
+   IF EXISTS (
+      SELECT 1 FROM "User"
+      WHERE user_email="User".email
+      AND login.password="User".password
+   ) THEN
+      INSERT INTO "log" (log_type,email,log_time) VALUES ('login',user_email,NOW());
+      RETURN true;
+   ELSE
+      RETURN false;
+   END IF;
+END;
+$$;
+
+CREATE OR REPLACE PROCEDURE logout(
+   user_email VARCHAR
+)
+LANGUAGE plpgsql
+AS
+$$
+BEGIN
+   INSERT INTO "log" (log_type,email,log_time) VALUES ('logout',user_email,NOW());
+END;
+$$;
 
 CREATE OR REPLACE PROCEDURE booking_not_available_exception()
 LANGUAGE plpgsql
