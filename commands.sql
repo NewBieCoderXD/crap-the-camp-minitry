@@ -80,8 +80,7 @@ CREATE TABLE "edit"(
    out_date DATE NOT NULL,
    price DECIMAL NOT NULL,
    edit_timestamp TIMESTAMP NOT NULL,
-   PRIMARY KEY (address,editor_email,booking_owner_id,edit_timestamp),
-   FOREIGN KEY (address,booking_owner_id,in_date) REFERENCES "Booking"(address,customer_id,in_date)
+   PRIMARY KEY (address,editor_email,booking_owner_id,edit_timestamp)
 );
 
 CREATE OR REPLACE PROCEDURE edit_booking(
@@ -125,8 +124,15 @@ BEGIN
       AND "Booking".address=old_address;
 
       INSERT INTO edit VALUES (old_address,editor_email,booking_owner_id,old_in_date,old_out_date,old_price,NOW());
+
       UPDATE "Booking"
-      SET "Booking".
+      SET address=new_address,
+      in_date=new_in_date,
+      out_date=new_out_date,
+      price=new_price
+      WHERE "Booking".in_date=old_in_date
+      AND "Booking".customer_id=booking_owner_id
+      AND "Booking".address=old_address;
    END IF;
 END;
 $$;
