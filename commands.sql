@@ -8,6 +8,8 @@ DROP TABLE IF EXISTS "PlaceOwner" CASCADE;
 DROP TABLE IF EXISTS "Place" CASCADE;
 DROP TABLE IF EXISTS "Booking" CASCADE;
 DROP TABLE IF EXISTS "edit" CASCADE;
+DROP TABLE IF EXISTS "log";
+DROP TYPE IF EXISTS "Log_Type";
 
 DROP PROCEDURE IF EXISTS pay;
 DROP PROCEDURE IF EXISTS edit_booking;
@@ -84,6 +86,18 @@ CREATE TABLE "edit"(
    out_date DATE NOT NULL,
    edit_timestamp TIMESTAMP NOT NULL,
    PRIMARY KEY (address,editor_email,booking_owner_id,edit_timestamp)
+);
+
+CREATE TYPE "Log_Type" AS ENUM(
+   'login',
+   'logout'
+);
+
+CREATE TABLE "log"(
+   log_id SERIAL PRIMARY KEY,
+   log_type "Log_Type",
+   email VARCHAR,
+   log_time TIMESTAMP
 );
 
 CREATE OR REPLACE PROCEDURE booking_not_available_exception()
