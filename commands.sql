@@ -47,7 +47,8 @@ CREATE TABLE "Booking"(
    customer_id INTEGER NOT NULL REFERENCES "Customer" (customer_id),
    address VARCHAR NOT NULL REFERENCES "Place" (address),
    out_date DATE NOT NULL,
-   PRIMARY KEY (in_date, customer_id, address)
+   PRIMARY KEY (in_date, customer_id, address),
+   CONSTRAINT time_travel CHECK (out_date>=in_date)
 );
 
 CREATE TABLE "Transaction"(                                                                    
@@ -146,9 +147,9 @@ BEGIN
       AND "Transaction".customer_id="Booking".customer_id
       AND "Transaction".address="Booking".address
       WHERE "Transaction".pay_timestamp is null
-      AND deleted_in_date="Booking".in_date
+      AND old_in_date="Booking".in_date
       AND booking_owner_id="Booking".customer_id
-      AND deleted_address="Booking".address
+      AND old_address="Booking".address
    ) THEN
       CALL booking_not_available_exception();
    -- check if deleter is booking's owner or admin
