@@ -1,3 +1,4 @@
+-- commands
 DROP TABLE IF EXISTS "delete";
 DROP TABLE IF EXISTS "owns";
 DROP TABLE IF EXISTS "Transaction" CASCADE;
@@ -100,6 +101,8 @@ CREATE TABLE "log"(
    log_time TIMESTAMP
 );
 
+
+-- below is complex query
 CREATE OR REPLACE FUNCTION login(
    user_email VARCHAR,
    password VARCHAR(40)
