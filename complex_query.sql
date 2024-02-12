@@ -8,6 +8,7 @@ WITH paid_booking AS (
     FROM "Place" 
     LEFT JOIN paid_booking 
     USING(address) 
+    WHERE '2023-05-12'::DATE BETWEEN paid_booking.in_date AND paid_booking.out_date
     GROUP BY paid_booking.address
 )
 SELECT "Place".*, capacity-count_booking.count AS available_capacity
